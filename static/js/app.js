@@ -2,6 +2,7 @@ const dropzone = document.getElementById("dropzone");
 const inputImagen = document.getElementById("input-imagen");
 const preview = document.getElementById("preview");
 const dropzoneTexto = document.getElementById("dropzone-texto");
+const dropzoneIcono = document.getElementById("dropzone-icono");
 const form = document.getElementById("form-analisis");
 const btnAnalizar = document.getElementById("btn-analizar");
 const btnLimpiar = document.getElementById("btn-limpiar");
@@ -18,6 +19,7 @@ function mostrarPreview(archivo) {
   lector.onload = () => {
     preview.src = lector.result;
     preview.hidden = false;
+    dropzoneIcono.hidden = true;
     dropzoneTexto.textContent = archivo.name;
   };
   lector.readAsDataURL(archivo);
@@ -28,6 +30,7 @@ function limpiar() {
   inputImagen.value = "";
   preview.hidden = true;
   preview.src = "";
+  dropzoneIcono.hidden = false;
   dropzoneTexto.textContent = "Arrastra una imagen aquí o haz clic para elegirla";
   btnAnalizar.disabled = true;
   estado.textContent = "";

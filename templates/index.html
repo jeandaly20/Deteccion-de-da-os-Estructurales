@@ -3,37 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detector de Daños Estructurales — CNN</title>
+    <title>Inspección Estructural IA — Detección de daños</title>
     <meta
       name="description"
-      content="Demo funcional de un sistema de visión por computador que detecta daños en paredes y superficies de concreto usando redes neuronales convolucionales."
+      content="Sistema de visión por computador que detecta daños en paredes y superficies de concreto usando redes neuronales convolucionales entrenadas por transfer learning."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   </head>
   <body>
-    <header class="header">
-      <div class="container">
-        <p class="header__eyebrow">Proyecto de Inteligencia Artificial</p>
-        <h1 class="header__title">Detector de Daños Estructurales</h1>
-        <p class="header__lead">
-          Sube una fotografía de una pared o superficie de concreto. Las redes
-          neuronales convolucionales {{ modelos|join(", ") }}, entrenadas para
-          reconocer 7 tipos de estado de la superficie, analizan la imagen y
-          combinan sus resultados en una predicción conjunta.
-        </p>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <span class="brand__mark" aria-hidden="true">IA</span>
+          <span class="brand__name">Inspección Estructural</span>
+        </div>
+        <a class="topbar__link" href="https://github.com/jeandaly20/Deteccion-Danos-Estructurales" target="_blank" rel="noopener">
+          Código fuente
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3" />
+          </svg>
+        </a>
       </div>
     </header>
 
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow">Visión por computador · Transfer learning</p>
+        <h1 class="hero__title">Detecta daños estructurales a partir de una foto</h1>
+        <p class="hero__lead">
+          Sube una fotografía de una pared o superficie de concreto y un
+          ensamble de redes neuronales convolucionales ({{ modelos|join(", ") }})
+          la clasifica en 7 posibles estados: grietas, humedad, desprendimiento,
+          pintura descascarada, algas o superficie en buen estado.
+        </p>
+        <ul class="hero__stats">
+          <li>
+            <strong>85–86%</strong>
+            <span>accuracy en el conjunto de prueba</span>
+          </li>
+          <li>
+            <strong>7</strong>
+            <span>tipos de estado detectados</span>
+          </li>
+          <li>
+            <strong>{{ modelos|length }}</strong>
+            <span>modelos combinados en el ensamble</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <main class="container">
-      <section class="panel" aria-labelledby="subir-titulo">
-        <h2 id="subir-titulo" class="visually-hidden">Subir imagen</h2>
+      <section class="panel surface" aria-labelledby="subir-titulo">
+        <h2 id="subir-titulo" class="panel__titulo">Analiza una imagen</h2>
 
         <form id="form-analisis">
           <label class="dropzone" id="dropzone" for="input-imagen">
             <img id="preview" class="dropzone__preview" alt="" hidden />
+            <svg id="dropzone-icono" class="dropzone__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5M16 8l-4-4-4 4M12 4.5V15" />
+            </svg>
             <span class="dropzone__texto" id="dropzone-texto">
               Arrastra una imagen aquí o haz clic para elegirla
             </span>
+            <span class="dropzone__ayuda">JPG, PNG o WEBP</span>
             <input
               type="file"
               id="input-imagen"
@@ -59,40 +98,66 @@
       <section class="resultados" id="resultados" hidden aria-labelledby="resultados-titulo">
         <h2 id="resultados-titulo" class="visually-hidden">Resultados</h2>
 
-        <article class="card card--ensamble">
-          <p class="card__etiqueta">Predicción conjunta (ensamble de {{ modelos|length }} CNN)</p>
+        <article class="card surface card--ensamble">
+          <p class="card__etiqueta">Predicción conjunta · ensamble de {{ modelos|length }} CNN</p>
           <p class="card__clase" id="ensamble-clase">—</p>
           <p class="card__confianza" id="ensamble-confianza"></p>
           <p class="card__consenso" id="consenso-texto"></p>
         </article>
 
-        <article class="card">
-          <p class="card__etiqueta">Probabilidad por tipo de daño</p>
-          <ul class="barras" id="barras-clases"></ul>
-        </article>
+        <div class="resultados__grid">
+          <article class="card surface">
+            <p class="card__etiqueta">Probabilidad por tipo de daño</p>
+            <ul class="barras" id="barras-clases"></ul>
+          </article>
 
-        <article class="card">
-          <p class="card__etiqueta">Comparación entre arquitecturas</p>
-          <table class="tabla-modelos">
-            <thead>
-              <tr>
-                <th scope="col">Modelo</th>
-                <th scope="col">Predicción</th>
-                <th scope="col">Confianza</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-modelos-cuerpo"></tbody>
-          </table>
-        </article>
+          <article class="card surface">
+            <p class="card__etiqueta">Comparación entre arquitecturas</p>
+            <table class="tabla-modelos">
+              <thead>
+                <tr>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Predicción</th>
+                  <th scope="col">Confianza</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-modelos-cuerpo"></tbody>
+            </table>
+          </article>
+        </div>
+      </section>
+
+      <section class="pasos" aria-labelledby="pasos-titulo">
+        <h2 id="pasos-titulo" class="visually-hidden">Cómo funciona</h2>
+        <ol class="pasos__lista">
+          <li class="pasos__item">
+            <span class="pasos__numero">1</span>
+            <p class="pasos__texto"><strong>Subes una foto</strong> de la pared o superficie a inspeccionar.</p>
+          </li>
+          <li class="pasos__item">
+            <span class="pasos__numero">2</span>
+            <p class="pasos__texto">Cada red convolucional la analiza por separado con su propio preprocesamiento.</p>
+          </li>
+          <li class="pasos__item">
+            <span class="pasos__numero">3</span>
+            <p class="pasos__texto">Sus probabilidades se promedian en un <strong>ensamble</strong> y se muestra el diagnóstico.</p>
+          </li>
+        </ol>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="container">
-        <p>
-          Proyecto académico de Jean Suárez — clasificación de daños estructurales
-          con transfer learning (TensorFlow / Keras) servido con Flask.
+      <div class="container footer__inner">
+        <p class="footer__texto">
+          Proyecto de Jean Suárez — clasificación de daños estructurales con
+          transfer learning, servido con Flask.
         </p>
+        <ul class="badge-list">
+          <li><span class="badge">Python</span></li>
+          <li><span class="badge">TensorFlow/Keras</span></li>
+          <li><span class="badge">Flask</span></li>
+          <li><span class="badge">Docker</span></li>
+        </ul>
       </div>
     </footer>
 
