@@ -65,7 +65,7 @@ app = Flask(__name__)
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", modelos=list(MODELOS.keys()))
 
 
 @app.post("/api/predecir")

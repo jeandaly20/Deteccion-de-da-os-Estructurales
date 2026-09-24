@@ -6,7 +6,7 @@
     <title>Detector de Daños Estructurales — CNN</title>
     <meta
       name="description"
-      content="Demo funcional de un sistema de visión por computador que detecta daños en paredes y superficies de concreto usando cuatro redes neuronales convolucionales."
+      content="Demo funcional de un sistema de visión por computador que detecta daños en paredes y superficies de concreto usando redes neuronales convolucionales."
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   </head>
@@ -16,10 +16,10 @@
         <p class="header__eyebrow">Proyecto de Inteligencia Artificial</p>
         <h1 class="header__title">Detector de Daños Estructurales</h1>
         <p class="header__lead">
-          Sube una fotografía de una pared o superficie de concreto. Cuatro redes
-          neuronales convolucionales (VGG16, ResNet50, MobileNetV2 y EfficientNetB0),
-          entrenadas para reconocer 7 tipos de estado de la superficie, analizan la
-          imagen y combinan sus resultados en una predicción conjunta.
+          Sube una fotografía de una pared o superficie de concreto. Las redes
+          neuronales convolucionales {{ modelos|join(", ") }}, entrenadas para
+          reconocer 7 tipos de estado de la superficie, analizan la imagen y
+          combinan sus resultados en una predicción conjunta.
         </p>
       </div>
     </header>
@@ -60,7 +60,7 @@
         <h2 id="resultados-titulo" class="visually-hidden">Resultados</h2>
 
         <article class="card card--ensamble">
-          <p class="card__etiqueta">Predicción conjunta (ensamble de las 4 CNN)</p>
+          <p class="card__etiqueta">Predicción conjunta (ensamble de {{ modelos|length }} CNN)</p>
           <p class="card__clase" id="ensamble-clase">—</p>
           <p class="card__confianza" id="ensamble-confianza"></p>
           <p class="card__consenso" id="consenso-texto"></p>
