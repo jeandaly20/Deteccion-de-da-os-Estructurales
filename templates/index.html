@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detector de Daños Estructurales — CNN</title>
+    <meta
+      name="description"
+      content="Demo funcional de un sistema de visión por computador que detecta daños en paredes y superficies de concreto usando cuatro redes neuronales convolucionales."
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <p class="header__eyebrow">Proyecto de Inteligencia Artificial</p>
+        <h1 class="header__title">Detector de Daños Estructurales</h1>
+        <p class="header__lead">
+          Sube una fotografía de una pared o superficie de concreto. Cuatro redes
+          neuronales convolucionales (VGG16, ResNet50, MobileNetV2 y EfficientNetB0),
+          entrenadas para reconocer 7 tipos de estado de la superficie, analizan la
+          imagen y combinan sus resultados en una predicción conjunta.
+        </p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="panel" aria-labelledby="subir-titulo">
+        <h2 id="subir-titulo" class="visually-hidden">Subir imagen</h2>
+
+        <form id="form-analisis">
+          <label class="dropzone" id="dropzone" for="input-imagen">
+            <img id="preview" class="dropzone__preview" alt="" hidden />
+            <span class="dropzone__texto" id="dropzone-texto">
+              Arrastra una imagen aquí o haz clic para elegirla
+            </span>
+            <input
+              type="file"
+              id="input-imagen"
+              name="imagen"
+              accept="image/png, image/jpeg, image/webp"
+              class="visually-hidden"
+            />
+          </label>
+
+          <div class="panel__acciones">
+            <button type="submit" class="btn btn--primary" id="btn-analizar" disabled>
+              Analizar imagen
+            </button>
+            <button type="button" class="btn btn--ghost" id="btn-limpiar">
+              Limpiar
+            </button>
+          </div>
+        </form>
+
+        <p class="estado" id="estado" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="resultados" id="resultados" hidden aria-labelledby="resultados-titulo">
+        <h2 id="resultados-titulo" class="visually-hidden">Resultados</h2>
+
+        <article class="card card--ensamble">
+          <p class="card__etiqueta">Predicción conjunta (ensamble de las 4 CNN)</p>
+          <p class="card__clase" id="ensamble-clase">—</p>
+          <p class="card__confianza" id="ensamble-confianza"></p>
+          <p class="card__consenso" id="consenso-texto"></p>
+        </article>
+
+        <article class="card">
+          <p class="card__etiqueta">Probabilidad por tipo de daño</p>
+          <ul class="barras" id="barras-clases"></ul>
+        </article>
+
+        <article class="card">
+          <p class="card__etiqueta">Comparación entre arquitecturas</p>
+          <table class="tabla-modelos">
+            <thead>
+              <tr>
+                <th scope="col">Modelo</th>
+                <th scope="col">Predicción</th>
+                <th scope="col">Confianza</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-modelos-cuerpo"></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Proyecto académico de Jean Suárez — clasificación de daños estructurales
+          con transfer learning (TensorFlow / Keras) servido con Flask.
+        </p>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>
