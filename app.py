@@ -24,6 +24,47 @@ CLASES_ES = {
     "stain": "Mancha o humedad",
 }
 
+# Recomendación práctica por tipo de daño: qué hacer y con qué urgencia.
+# Pensado para que el encargado de obra sepa cómo priorizar sin necesitar
+# todavía una visita de un especialista para los casos leves.
+RECOMENDACIONES = {
+    "normal": {
+        "urgencia": "baja",
+        "accion": "No se detectan daños.",
+        "detalle": "Continuar con las inspecciones rutinarias (cada 6-12 meses). No se requiere intervención.",
+    },
+    "minor_crack": {
+        "urgencia": "media",
+        "accion": "Sellar y monitorear.",
+        "detalle": "Suele originarse por retracción del concreto o asentamientos leves. Sellar con masilla elastomérica y volver a fotografiar el mismo punto cada 3 meses para ver si la grieta avanza.",
+    },
+    "major_crack": {
+        "urgencia": "alta",
+        "accion": "Requiere evaluación estructural.",
+        "detalle": "Puede indicar un problema de fondo (asentamiento, sobrecarga o falla de diseño). Antes de reparar, un ingeniero estructural debe inspeccionar el elemento afectado.",
+    },
+    "spalling": {
+        "urgencia": "alta",
+        "accion": "Reparar antes de que avance la corrosión.",
+        "detalle": "El desprendimiento suele exponer varillas corroídas. Picar el concreto suelto, tratar el acero con inhibidor de corrosión y resanar con mortero estructural.",
+    },
+    "peeling": {
+        "urgencia": "baja",
+        "accion": "Reparación estética, sin urgencia estructural.",
+        "detalle": "Remover la pintura suelta, lijar, aplicar sellador y repintar. Si reaparece rápido, revisar si hay una fuente de humedad detrás.",
+    },
+    "stain": {
+        "urgencia": "media",
+        "accion": "Buscar el origen de la humedad antes de repintar.",
+        "detalle": "La mancha suele ser síntoma de una filtración (tubería, impermeabilización de techo o fachada). Corregir esa fuente primero; repintar sin hacerlo solo oculta el problema.",
+    },
+    "algae": {
+        "urgencia": "media",
+        "accion": "Limpiar y mejorar ventilación/drenaje.",
+        "detalle": "Indica humedad constante y poca luz solar. Lavar con biocida, revisar el drenaje cercano y aplicar pintura antihongos para evitar que reaparezca.",
+    },
+}
+
 
 def cargar_modelo(nombre_archivo, funcion_preprocesamiento):
     ruta = os.path.join(MODELS_DIR, nombre_archivo)
@@ -115,6 +156,7 @@ def predecir():
                     CLASES_ES.get(nombre, nombre): round(float(valor) * 100, 2)
                     for nombre, valor in zip(CLASS_NAMES, promedio)
                 },
+                "recomendacion": RECOMENDACIONES.get(clase_ensamble),
             },
             "consenso": {
                 "clase_es": CLASES_ES.get(clase_consenso, clase_consenso),

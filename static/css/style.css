@@ -379,6 +379,83 @@ main {
   font-size: 0.9rem;
 }
 
+/* Recomendación */
+
+.recomendacion__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.recomendacion__cabecera .card__etiqueta {
+  margin: 0;
+}
+
+.recomendacion__accion {
+  margin: 0.5rem 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.recomendacion__detalle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pill::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.pill--baja {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.pill--media {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.pill--alta {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pill--baja {
+    color: #4ade80;
+    background: #052e16;
+  }
+
+  .pill--media {
+    color: #fbbf24;
+    background: #451a03;
+  }
+
+  .pill--alta {
+    color: #f87171;
+    background: #450a0a;
+  }
+}
+
 .barras {
   list-style: none;
   margin: 0;

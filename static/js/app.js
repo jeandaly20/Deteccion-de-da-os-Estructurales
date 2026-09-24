@@ -13,6 +13,15 @@ const ensambleConfianza = document.getElementById("ensamble-confianza");
 const consensoTexto = document.getElementById("consenso-texto");
 const barrasClases = document.getElementById("barras-clases");
 const tablaModelosCuerpo = document.getElementById("tabla-modelos-cuerpo");
+const recomendacionUrgencia = document.getElementById("recomendacion-urgencia");
+const recomendacionAccion = document.getElementById("recomendacion-accion");
+const recomendacionDetalle = document.getElementById("recomendacion-detalle");
+
+const ETIQUETAS_URGENCIA = {
+  baja: "Urgencia baja",
+  media: "Urgencia media",
+  alta: "Urgencia alta",
+};
 
 function mostrarPreview(archivo) {
   const lector = new FileReader();
@@ -69,6 +78,14 @@ function renderizarResultados(datos) {
   ensambleClase.textContent = datos.ensamble.clase_es;
   ensambleConfianza.textContent = `Confianza del ensamble: ${datos.ensamble.confianza}%`;
   consensoTexto.textContent = `${datos.consenso.votos} de ${datos.consenso.total} modelos coinciden en "${datos.consenso.clase_es}".`;
+
+  const recomendacion = datos.ensamble.recomendacion;
+  if (recomendacion) {
+    recomendacionUrgencia.textContent = ETIQUETAS_URGENCIA[recomendacion.urgencia] || recomendacion.urgencia;
+    recomendacionUrgencia.className = `pill pill--${recomendacion.urgencia}`;
+    recomendacionAccion.textContent = recomendacion.accion;
+    recomendacionDetalle.textContent = recomendacion.detalle;
+  }
 
   const probabilidades = Object.entries(datos.ensamble.probabilidades).sort(
     (a, b) => b[1] - a[1]
