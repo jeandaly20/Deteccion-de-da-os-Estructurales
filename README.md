@@ -1,13 +1,3 @@
----
-title: Detector de Danos Estructurales
-emoji: 🧱
-colorFrom: indigo
-colorTo: teal
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Detector de Daños Estructurales — CNN Ensemble
 
 Aplicación web que pone a producir cuatro redes neuronales convolucionales
@@ -30,18 +20,26 @@ modelo se pueda usar como un producto real y no solo dentro de un notebook.
 | MobileNetV2    | 85.23%   | 0.853    |
 | EfficientNetB0 | 85.23%   | 0.854    |
 
-La app combina las 4 predicciones promediando sus probabilidades
-(*ensemble*) y muestra también el consenso por mayoría de votos.
+La app combina las predicciones de los modelos cargados promediando sus
+probabilidades (*ensemble*) y muestra también el consenso por mayoría de
+votos.
+
+> **Nota sobre el despliegue:** por defecto la app solo carga MobileNetV2 y
+> EfficientNetB0 (los dos modelos más livianos, ~35 MB en total) para poder
+> correr en hosting gratuito con poca RAM. Los 4 modelos completos, con su
+> comparación de accuracy, están documentados en `notebooks/4cnn.ipynb` y se
+> pueden activar en la app con la variable de entorno `MODELOS_A_CARGAR`
+> (ver más abajo).
 
 ## Cómo funciona
 
 1. El usuario sube una foto de la superficie desde el navegador.
-2. El backend (`app.py`) redimensiona la imagen a 224×224 y la pasa por las
-   4 CNN, cada una con su propio preprocesamiento (`preprocess_input`).
-3. Se calcula el promedio de las 4 probabilidades por clase (ensemble) y el
+2. El backend (`app.py`) redimensiona la imagen a 224×224 y la pasa por cada
+   CNN cargada, cada una con su propio preprocesamiento (`preprocess_input`).
+3. Se calcula el promedio de las probabilidades por clase (ensemble) y el
    consenso por mayoría de votos.
 4. El frontend (`templates/`, `static/`) muestra la predicción conjunta, la
-   confianza por clase y la comparación entre las 4 arquitecturas.
+   confianza por clase y la comparación entre modelos.
 
 ## Stack
 
@@ -49,7 +47,7 @@ La app combina las 4 predicciones promediando sus probabilidades
   MobileNetV2 y EfficientNetB0).
 - **Backend:** Python + Flask, servido con Gunicorn.
 - **Frontend:** HTML5, CSS3 (custom properties) y JavaScript sin frameworks.
-- **Despliegue:** contenedor Docker en Hugging Face Spaces.
+- **Despliegue:** contenedor Docker en Render (plan gratuito).
 
 ## Ejecutar en local
 
@@ -60,26 +58,54 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Luego abre `http://localhost:7860`.
+Luego abre `http://localhost:7860`. Por defecto corre con los 2 modelos
+livianos; para probar los 4 completos en tu máquina:
 
-## Desplegar en Hugging Face Spaces
+```bash
+set MODELOS_A_CARGAR=VGG16,ResNet50,MobileNetV2,EfficientNetB0
+python app.py
+```
 
-Los modelos pesan en total ~360 MB, por lo que necesitan Git LFS:
+## Desplegar en Render (gratis)
+
+Los modelos usan Git LFS porque pesan varios MB cada uno:
 
 ```bash
 git lfs install
 git lfs track "*.keras"
 git add .
 git commit -m "Detector de daños estructurales"
+git push origin main
 ```
 
-Crea un Space nuevo en huggingface.co con SDK **Docker**, agrega su URL como
-remoto y súbelo:
+En [render.com](https://render.com):
 
-```bash
-git remote add space https://huggingface.co/spaces/<tu-usuario>/<nombre-del-space>
-git push space main
+1. **New +** → **Web Service** → conecta tu repositorio de GitHub.
+2. Render detecta el `Dockerfile` automáticamente (Environment: Docker).
+3. Elige el plan **Free**.
+4. Deja `MODELOS_A_CARGAR` sin definir (usa el valor por defecto, liviano) y
+   despliega.
+
+El servicio gratuito de Render se "duerme" tras 15 minutos sin uso y tarda
+unos segundos en despertar en la siguiente visita — es normal en un plan
+gratuito.
+
+## Alternativa: Hugging Face Spaces
+
+Hugging Face Spaces también sirve para desplegar este Docker, pero desde
+2026 los Spaces con cómputo (Docker o Gradio) requieren el plan PRO
+($9/mes). Si en algún momento tienes esa suscripción, basta con crear un
+Space con SDK **Docker**, agregar esa cabecera al inicio de este README:
+
+```yaml
+---
+title: Detector de Danos Estructurales
+emoji: 🧱
+colorFrom: indigo
+colorTo: teal
+sdk: docker
+app_port: 7860
+---
 ```
 
-El `README.md` ya trae la cabecera que Hugging Face necesita para construir
-el Space con Docker en el puerto 7860.
+y hacer `git push` al remoto del Space.

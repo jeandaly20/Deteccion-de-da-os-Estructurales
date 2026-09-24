@@ -35,12 +35,24 @@ def cargar_modelo(nombre_archivo, funcion_preprocesamiento):
     )
 
 
-print("Cargando los 4 modelos entrenados, esto puede tardar unos segundos...")
+CONFIGURACION_MODELOS = {
+    "VGG16": ("mejor_vgg16_final.keras", preprocess_vgg16),
+    "ResNet50": ("mejor_resnet50_final.keras", preprocess_resnet50),
+    "MobileNetV2": ("mejor_mobilenetv2_fase1.keras", preprocess_mobilenetv2),
+    "EfficientNetB0": ("mejor_efficientnetb0_fase1.keras", preprocess_efficientnet),
+}
+
+# Por defecto solo se cargan los 2 modelos livianos (~35 MB en total) para que
+# la app funcione en hosting gratuito con poca RAM (p. ej. Render free, 512 MB).
+# Para correr los 4 modelos completos (como en el notebook de entrenamiento),
+# define la variable de entorno MODELOS_A_CARGAR=VGG16,ResNet50,MobileNetV2,EfficientNetB0
+NOMBRES_MODELOS = os.environ.get("MODELOS_A_CARGAR", "MobileNetV2,EfficientNetB0").split(",")
+
+print(f"Cargando modelos: {', '.join(NOMBRES_MODELOS)}...")
 MODELOS = {
-    "VGG16": cargar_modelo("mejor_vgg16_final.keras", preprocess_vgg16),
-    "ResNet50": cargar_modelo("mejor_resnet50_final.keras", preprocess_resnet50),
-    "MobileNetV2": cargar_modelo("mejor_mobilenetv2_fase1.keras", preprocess_mobilenetv2),
-    "EfficientNetB0": cargar_modelo("mejor_efficientnetb0_fase1.keras", preprocess_efficientnet),
+    nombre: cargar_modelo(*CONFIGURACION_MODELOS[nombre])
+    for nombre in NOMBRES_MODELOS
+    if nombre in CONFIGURACION_MODELOS
 }
 
 with open(os.path.join(MODELS_DIR, "class_names.json"), encoding="utf-8") as archivo:

@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 7860
 
-CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--timeout", "180", "--workers", "1", "app:app"]
+CMD gunicorn --bind 0.0.0.0:${PORT:-7860} --timeout 180 --workers 1 app:app
