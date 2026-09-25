@@ -144,6 +144,12 @@ form.addEventListener("submit", async (evento) => {
       throw new Error(datos.error || "No se pudo analizar la imagen.");
     }
 
+    if (datos.reconocido === false) {
+      resultados.hidden = true;
+      estado.textContent = datos.mensaje;
+      return;
+    }
+
     estado.textContent = "";
     renderizarResultados(datos);
   } catch (error) {
